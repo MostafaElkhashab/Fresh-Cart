@@ -1,0 +1,5 @@
+.background_cover{
+    background-image: url('../../images/light-patten.svg');
+    background-attachment: fixed;
+    background-size: cover;
+}

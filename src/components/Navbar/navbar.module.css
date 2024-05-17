@@ -1,0 +1,14 @@
+.background {
+    background-color: #E9E8E8;
+    
+}
+
+@media (max-width: 768px) {
+    .mobileView {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+    }
+    
+}

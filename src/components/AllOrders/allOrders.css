@@ -1,0 +1,11 @@
+.background {
+    background-image: url("../../images/light-patten.svg");
+    background-size: cover;
+
+}
+
+.title {
+    font-weight: bold;
+    font-size: 40px;
+    color: rgb(19, 168, 19);
+}

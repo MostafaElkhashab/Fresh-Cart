@@ -1,0 +1,19 @@
+.emptyCart{
+    background-image: url("../../images/empty-cart-illustration.gif");
+    background-size: cover;
+}
+.background {
+    background-image: url("../../images/light-patten.svg");
+    background-size: cover;
+
+}
+
+.title {
+    font-weight: bold;
+    font-size: 40px;
+    color: rgb(19, 168, 19);
+}
+
+.empty :hover{
+    text-decoration: underline !important;
+}

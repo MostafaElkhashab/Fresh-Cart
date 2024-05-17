@@ -1,0 +1,16 @@
+.background{
+    background-color: rgba(228, 227, 227, 0.826);
+}
+.border{
+    border-top: solid 1px rgb(208, 206, 206);
+}
+.border2{
+    border-bottom: solid 1px rgb(208, 206, 206);
+
+}
+.footerText :hover{
+    color: #0AAD0A;
+}
+.wrapper{
+    gap: 2rem;
+}
