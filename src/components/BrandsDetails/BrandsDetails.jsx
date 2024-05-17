@@ -46,6 +46,7 @@ export default function BrandsDetails() {
             </title>
         </Helmet>
         <div className='container'>
+            <span></span>
             <h2 className='text-center main-color mt-5'>Brand's Products</h2>
             <div className="row g-4 mt-3">
 
