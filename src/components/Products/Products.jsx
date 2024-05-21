@@ -16,7 +16,7 @@ import { wishListContext } from '../../context/wishListContext';
 export default function Products() {
 
   const { addProductToCart } = useContext(cartContext);
-  const { addProductToWishList } = useContext(wishListContext)
+  const { addProductToWishList} = useContext(wishListContext)
   const { token } = useContext(authContext)
 
   async function addProduct(id) {
@@ -91,7 +91,7 @@ export default function Products() {
                 <div className='product position-relative' >
                   {token ? <>
                     <span className='wish-list text-danger fs-4 shadow position-absolute' onClick={() => { addToWishList(product._id) }}>
-                    <i className="fa-regular fa-heart text-danger"></i>
+                      <i className="fa-regular fa-heart text-danger"></i>
                     </span>
                   </>
 
