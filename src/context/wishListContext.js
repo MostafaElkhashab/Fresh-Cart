@@ -7,7 +7,8 @@ export default function WithListProvider({ children }) {
 
     const [wishListProduct, setWishListProduct] = useState([]);
     const [numberOfWishListItems, setNumberOfWishListItems] = useState(0);
-    
+    const [likedProducts, setLikedProducts] = useState([]);
+    const [wishListCount, setWishListCount] = useState(0);
     async function addProductToWishList(productId) {
 
         try {
@@ -34,7 +35,7 @@ export default function WithListProvider({ children }) {
 
             setWishListProduct(data.data);
             // getUserWishList();
-            
+
         } catch (error) {
             console.log("Error", error);
         }
@@ -47,9 +48,9 @@ export default function WithListProvider({ children }) {
 
             })
             setNumberOfWishListItems(data.count);
-            getUserWishList();
+            // getUserWishList();
             // setWishListProduct(data.data);
-            
+
             return data
         } catch (error) {
             console.log("Error Happend", error);
@@ -63,7 +64,12 @@ export default function WithListProvider({ children }) {
         getUserWishList,
         numberOfWishListItems,
         wishListProduct,
-        deleteProductFromWishList
+        deleteProductFromWishList,
+        likedProducts,
+        setLikedProducts,
+        wishListCount,
+        setWishListCount,
+        setNumberOfWishListItems
     }}>
 
 

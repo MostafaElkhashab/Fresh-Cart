@@ -1,4 +1,4 @@
-import React, { useContext} from 'react'
+import React, { useContext, useEffect } from 'react'
 import { wishListContext } from '../../context/wishListContext'
 import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
@@ -9,7 +9,7 @@ import wish from "./wishList.module.css"
 
 export default function WishList() {
 
-    const { numberOfWishListItems, wishListProduct, deleteProductFromWishList } = useContext(wishListContext);
+    const { numberOfWishListItems, wishListProduct, deleteProductFromWishList, setNumberOfWishListItems, setLikedProducts, setWishListCount } = useContext(wishListContext);
     const { addProductToCart } = useContext(cartContext);
     async function addProduct(id) {
 
@@ -28,14 +28,26 @@ export default function WishList() {
         const res = await deleteProductFromWishList(id);
         if (res.status === "success") {
             toast.success(" 💔 Item Deleted Successfully from WishList");
-
+            updateWishListState(res?.data)
         }
         else {
             toast.error("Item Deleted Error");
         }
         console.log(res);
     }
-    return <section className={'mt-5 pt-5 '+wish.background}>
+    function updateWishListState(wishlistData) {
+        setNumberOfWishListItems(wishlistData.length);
+        setLikedProducts(wishlistData);
+        localStorage.setItem("wishlist", JSON.stringify(wishlistData));
+    }
+    useEffect(() => {
+        const storedWishlist = JSON.parse(localStorage.getItem("wishlist"));
+        if (storedWishlist) {
+            setWishListCount(storedWishlist.length);
+            setLikedProducts(storedWishlist);
+        }
+    }, [setWishListCount, setLikedProducts]);
+    return <section className={'mt-5 pt-5 ' + wish.background}>
         <Helmet>
             <title>
                 WishList
@@ -64,7 +76,7 @@ export default function WishList() {
                             💔
                             Delete</button>
                         <button onClick={() => { addProduct(product._id) }} className='btn text-white main-bg-color '>
-                        🛒ADD To Cart</button >
+                            🛒ADD To Cart</button >
 
                     </div>
                 </div>

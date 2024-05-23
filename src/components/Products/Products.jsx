@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import './products.css'
 import axios from 'axios'
 import { ThreeCircles } from 'react-loader-spinner';
@@ -16,7 +16,7 @@ import { wishListContext } from '../../context/wishListContext';
 export default function Products() {
 
   const { addProductToCart } = useContext(cartContext);
-  const { addProductToWishList} = useContext(wishListContext)
+  const { addProductToWishList, deleteProductFromWishList, likedProducts, setLikedProducts, setWishListCount, setNumberOfWishListItems } = useContext(wishListContext)
   const { token } = useContext(authContext)
 
   async function addProduct(id) {
@@ -34,22 +34,50 @@ export default function Products() {
   async function addToWishList(id) {
 
     const res = await addProductToWishList(id);
+
     console.log(res);
     if (res.status === "success") {
       toast.success(" 💖 " + res.message)
+      setLikedProducts(res?.data)
+      updateWishListState(res?.data);
+      setNumberOfWishListItems(res?.data?.length);
     }
     else {
       toast.error("Cant Add the Product to cart")
     }
   }
+  async function deleteElementFromWishList(id) {
+    const res = await deleteProductFromWishList(id);
+    if (res.status === "success") {
+      toast.success(" 💔 Item Deleted Successfully from WishList");
+      setLikedProducts(res?.data)
+      setNumberOfWishListItems(res?.data?.length);
+      updateWishListState(res.data)
+    }
+    else {
+      toast.error("Item Deleted Error");
+    }
+    console.log(res);
+  }
 
+  function updateWishListState(wishlistData) {
+    setNumberOfWishListItems(wishlistData.length);
+    setLikedProducts(wishlistData);
+    localStorage.setItem("wishlist", JSON.stringify(wishlistData));
+  }
   function getAllProducts() {
     return axios.get("https://ecommerce.routemisr.com/api/v1/products")
   }
   const { data, isLoading } = useQuery("allProducts", getAllProducts);
   console.log(data?.data.data);
 
-
+  useEffect(() => {
+    const storedWishlist = JSON.parse(localStorage.getItem("wishlist"));
+    if (storedWishlist) {
+      setWishListCount(storedWishlist.length);
+      setLikedProducts(storedWishlist);
+    }
+  }, [setWishListCount, setLikedProducts]);
   if (isLoading === true) {
     return <div className='min-vh-100 d-flex justify-content-center align-items-start '>
       <ThreeCircles
@@ -64,7 +92,7 @@ export default function Products() {
     </div>
   }
   function errorMsg() {
-    toast.error("YOU MUST LOGIN FIRST",)
+    toast.error("YOU MUST LOGIN FIRST")
   }
   return <>
     <Helmet>
@@ -90,9 +118,17 @@ export default function Products() {
               return <div key={product._id} className="product_card col-md-2 p-2 " >
                 <div className='product position-relative' >
                   {token ? <>
-                    <span className='wish-list text-danger fs-4 shadow position-absolute' onClick={() => { addToWishList(product._id) }}>
-                      <i className="fa-regular fa-heart text-danger"></i>
-                    </span>
+                    {likedProducts.includes(product?.id) ? (
+                      <span className='wish-list  fs-4 shadow position-absolute' onClick={() => { deleteElementFromWishList(product._id) }}>
+                        <i className="fa-solid fa-heart text-danger"></i>
+                      </span>
+                    ) : (
+                      <span className='wish-list  fs-4 shadow position-absolute' onClick={() => { addToWishList(product._id) }}>
+                        <i className="fa-regular fa-heart "></i>
+                      </span>
+
+                    )}
+
                   </>
 
                     :
