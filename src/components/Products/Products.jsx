@@ -16,7 +16,7 @@ import { wishListContext } from '../../context/wishListContext';
 export default function Products() {
 
   const { addProductToCart } = useContext(cartContext);
-  const { addProductToWishList, deleteProductFromWishList, likedProducts, setLikedProducts, setWishListCount, setNumberOfWishListItems } = useContext(wishListContext)
+  const { addProductToWishList, deleteProductFromWishList, likedProducts, setLikedProducts, setWishListCount } = useContext(wishListContext)
   const { token } = useContext(authContext)
 
   async function addProduct(id) {
@@ -33,35 +33,35 @@ export default function Products() {
   }
   async function addToWishList(id) {
 
-    const res = await addProductToWishList(id);
+    const {data}= await addProductToWishList(id);
 
-    console.log(res);
-    if (res.status === "success") {
-      toast.success(" 💖 " + res.message)
-      setLikedProducts(res?.data)
-      updateWishListState(res?.data);
-      setNumberOfWishListItems(res?.data?.length);
+    console.log(data);
+    if (data?.status === "success") {
+      toast.success(" 💖 " + data.message)
+      setLikedProducts(data.data)
+      updateWishListState(data.data);
+      setWishListCount(data?.data?.length);
     }
     else {
       toast.error("Cant Add the Product to cart")
     }
   }
   async function deleteElementFromWishList(id) {
-    const res = await deleteProductFromWishList(id);
-    if (res.status === "success") {
+    const {data} = await deleteProductFromWishList(id);
+    if (data.status === "success") {
       toast.success(" 💔 Item Deleted Successfully from WishList");
-      setLikedProducts(res?.data)
-      setNumberOfWishListItems(res?.data?.length);
-      updateWishListState(res.data)
+      setLikedProducts(data?.data)
+      setWishListCount(data?.data?.length);
+      updateWishListState(data.data)
     }
     else {
       toast.error("Item Deleted Error");
     }
-    console.log(res);
+    console.log(data);
   }
 
   function updateWishListState(wishlistData) {
-    setNumberOfWishListItems(wishlistData.length);
+    setWishListCount(wishlistData.length);
     setLikedProducts(wishlistData);
     localStorage.setItem("wishlist", JSON.stringify(wishlistData));
   }

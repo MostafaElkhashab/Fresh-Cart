@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { wishListContext } from '../../context/wishListContext'
 import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
@@ -9,10 +9,24 @@ import wish from "./wishList.module.css"
 
 export default function WishList() {
 
-    const { numberOfWishListItems, wishListProduct, deleteProductFromWishList, setNumberOfWishListItems, setLikedProducts, setWishListCount } = useContext(wishListContext);
-    const { addProductToCart } = useContext(cartContext);
-    async function addProduct(id) {
+    const {
+        deleteProductFromWishList,
+        setLikedProducts,
+        setWishListCount,
+        getUserWishList,
+        wishListCount
 
+    } = useContext(wishListContext);
+    const { addProductToCart } = useContext(cartContext);
+    const [wishList, setWishList] = useState(null);
+    // const [loading, setLoading] = useState(true);
+    async function getWishList() {
+        let { data } = await getUserWishList();
+        setWishList(data);
+        // setLoading(false);
+        setWishListCount(data?.data?.length);
+    }
+    async function addProduct(id) {
 
         const res = await addProductToCart(id);
         console.log(res);
@@ -25,28 +39,27 @@ export default function WishList() {
 
     }
     async function deleteElementFromWishList(id) {
-        const res = await deleteProductFromWishList(id);
-        if (res.status === "success") {
+        const { data } = await deleteProductFromWishList(id);
+        if (data.status === "success") {
             toast.success(" 💔 Item Deleted Successfully from WishList");
-            updateWishListState(res?.data)
+            updateWishListState(data.data)
+            getWishList(data);
         }
         else {
             toast.error("Item Deleted Error");
         }
-        console.log(res);
+
     }
     function updateWishListState(wishlistData) {
-        setNumberOfWishListItems(wishlistData.length);
+        setWishListCount(wishlistData.length);
         setLikedProducts(wishlistData);
         localStorage.setItem("wishlist", JSON.stringify(wishlistData));
     }
+
     useEffect(() => {
-        const storedWishlist = JSON.parse(localStorage.getItem("wishlist"));
-        if (storedWishlist) {
-            setWishListCount(storedWishlist.length);
-            setLikedProducts(storedWishlist);
-        }
-    }, [setWishListCount, setLikedProducts]);
+        getWishList();
+    }, );
+
     return <section className={'mt-5 pt-5 ' + wish.background}>
         <Helmet>
             <title>
@@ -56,9 +69,11 @@ export default function WishList() {
         <div className="container py-5 cart-cover my-5">
             <h2 className='text-danger'>WishList <span className='fs-1 text-danger fw-bold'>❤ </span></h2>
 
-            <h2 className='text-muted'>Number Of WishList Items : {numberOfWishListItems}</h2>
-
-            {wishListProduct.map(function (product, index) {
+            <h2 className='text-muted'>Number Of WishList Items :
+                {wishListCount}
+            </h2>
+            {console.log(wishList)}
+            {wishList?.data.map(function (product, index) {
                 console.log(product);
                 return <div className="row mb-5 border-bottom border-3 p-2" key={index}>
                     <div className="col-md-1 ">

@@ -12,7 +12,7 @@ export default function Navbar() {
   const navFunc = useNavigate();
   const { token, setToken, setUserData } = useContext(authContext);
   const { numberOfCartItems } = useContext(cartContext)
-  const { numberOfWishListItems } = useContext(wishListContext);
+  const { wishListCount } = useContext(wishListContext);
   function logOut() {
 
     localStorage.removeItem("tkn")
@@ -81,7 +81,7 @@ export default function Navbar() {
                     WishList
                     <i className="fa-regular fa-heart ms-1 fw-bold" style={{ color: "#ff3d3d" }}>
                       <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        {numberOfWishListItems}
+                        {wishListCount}
                         <span className="visually-hidden">unread messages </span>
                       </span>
                     </i>

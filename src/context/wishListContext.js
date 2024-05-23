@@ -5,22 +5,21 @@ export const wishListContext = createContext()
 
 export default function WithListProvider({ children }) {
 
-    const [wishListProduct, setWishListProduct] = useState([]);
-    const [numberOfWishListItems, setNumberOfWishListItems] = useState(0);
+    // const [wishListProduct, setWishListProduct] = useState([]);
+    // const [numberOfWishListItems, setNumberOfWishListItems] = useState(0);
     const [likedProducts, setLikedProducts] = useState([]);
     const [wishListCount, setWishListCount] = useState(0);
     async function addProductToWishList(productId) {
 
         try {
-            const { data } = await axios.post("https://ecommerce.routemisr.com/api/v1/wishlist", {
+            return await axios.post("https://ecommerce.routemisr.com/api/v1/wishlist", {
                 "productId": productId
             },
                 {
                     headers: { token: localStorage.getItem("tkn") }
                 }
             )
-            getUserWishList();
-            return data;
+
         } catch (error) {
             console.log("error", error);
         }
@@ -28,13 +27,9 @@ export default function WithListProvider({ children }) {
 
     async function getUserWishList() {
         try {
-            const { data } = await axios.get("https://ecommerce.routemisr.com/api/v1/wishlist", {
+            return await axios.get("https://ecommerce.routemisr.com/api/v1/wishlist", {
                 headers: { token: localStorage.getItem("tkn") }
             })
-            setNumberOfWishListItems(data.count);
-
-            setWishListProduct(data.data);
-            // getUserWishList();
 
         } catch (error) {
             console.log("Error", error);
@@ -43,15 +38,13 @@ export default function WithListProvider({ children }) {
 
     async function deleteProductFromWishList(productId) {
         try {
-            const { data } = await axios.delete(`https://ecommerce.routemisr.com/api/v1/wishlist/${productId}`, {
+            return await axios.delete(`https://ecommerce.routemisr.com/api/v1/wishlist/${productId}`, {
                 headers: { token: localStorage.getItem("tkn") }
 
             })
-            setNumberOfWishListItems(data.count);
-            // getUserWishList();
-            // setWishListProduct(data.data);
 
-            return data
+
+            // return data
         } catch (error) {
             console.log("Error Happend", error);
         }
@@ -62,14 +55,16 @@ export default function WithListProvider({ children }) {
     return <wishListContext.Provider value={{
         addProductToWishList,
         getUserWishList,
-        numberOfWishListItems,
-        wishListProduct,
+        // numberOfWishListItems,
+        // wishListProduct,
         deleteProductFromWishList,
         likedProducts,
         setLikedProducts,
         wishListCount,
         setWishListCount,
-        setNumberOfWishListItems
+        
+        // setNumberOfWishListItems,
+        // setWishListProduct
     }}>
 
 
