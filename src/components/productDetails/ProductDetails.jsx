@@ -1,8 +1,8 @@
 import axios from 'axios';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ThreeCircles } from 'react-loader-spinner';
 import { useQuery } from 'react-query'
-import {  useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import './productdetails.css'
 import { cartContext } from '../../context/cartContext';
 import { toast } from 'react-toastify';
@@ -20,7 +20,7 @@ export default function ProductDetails() {
     const [sendingWishLoader, setsendingWishLoader] = useState(false)
     const { addProductToCart } = useContext(cartContext);
     const { token } = useContext(authContext)
-    const { addProductToWishList } = useContext(wishListContext)
+    const { addProductToWishList, setLikedProducts, setWishListCount } = useContext(wishListContext)
 
 
     function errorMsg() {
@@ -35,6 +35,7 @@ export default function ProductDetails() {
         console.log(res);
         if (res.status === "success") {
             toast.success(res.message)
+
         }
         else {
             toast.error("Cant Add the Product to cart")
@@ -45,16 +46,31 @@ export default function ProductDetails() {
     async function addToWishList(id) {
 
         setsendingWishLoader(true)
-        const res = await addProductToWishList(id);
-        console.log(res);
-        if (res.status === "success") {
-            toast.success(" 💖 " + res.message)
+        const { data } = await addProductToWishList(id);
+        console.log(data);
+        if (data.status === "success") {
+            toast.success(" 💖 " + data.message)
+            setLikedProducts(data.data)
+            updateWishListState(data.data);
+            setWishListCount(data?.data?.length);
         }
         else {
             toast.error("Cant Add the Product to cart")
         }
         setsendingWishLoader(false)
     }
+    function updateWishListState(wishlistData) {
+        setWishListCount(wishlistData.length);
+        setLikedProducts(wishlistData);
+        localStorage.setItem("wishlist", JSON.stringify(wishlistData));
+    }
+    useEffect(() => {
+        const storedWishlist = JSON.parse(localStorage.getItem("wishlist"));
+        if (storedWishlist) {
+            setWishListCount(storedWishlist.length);
+            setLikedProducts(storedWishlist);
+        }
+    }, [setWishListCount, setLikedProducts]);
 
     function getProductDetails() {
         return axios.get(`https://ecommerce.routemisr.com/api/v1/products/${id}`)
