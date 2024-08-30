@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './products.css'
 import axios from 'axios'
 import { ThreeCircles } from 'react-loader-spinner';
@@ -33,7 +33,7 @@ export default function Products() {
   }
   async function addToWishList(id) {
 
-    const {data}= await addProductToWishList(id);
+    const { data } = await addProductToWishList(id);
 
     console.log(data);
     if (data?.status === "success") {
@@ -47,7 +47,7 @@ export default function Products() {
     }
   }
   async function deleteElementFromWishList(id) {
-    const {data} = await deleteProductFromWishList(id);
+    const { data } = await deleteProductFromWishList(id);
     if (data.status === "success") {
       toast.success(" 💔 Item Deleted Successfully from WishList");
       setLikedProducts(data?.data)
@@ -69,8 +69,11 @@ export default function Products() {
     return axios.get("https://ecommerce.routemisr.com/api/v1/products")
   }
   const { data, isLoading } = useQuery("allProducts", getAllProducts);
+  const [searchQuery, setSearchQuery] = useState('');
   console.log(data?.data.data);
-
+  const filteredProducts = data?.data.data.filter(product =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   useEffect(() => {
     const storedWishlist = JSON.parse(localStorage.getItem("wishlist"));
     if (storedWishlist) {
@@ -112,8 +115,8 @@ export default function Products() {
         </div>
         <CategorySlider />
         <div className="row g-4 mt-3">
-
-          {data?.data.data.map(
+          <input type="text" placeholder='Search Products ' className='form-control text-center fs-3' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}/>
+          {filteredProducts?.map(
             (product) => {
               return <div key={product._id} className="product_card col-md-2 p-2 " >
                 <div className='product position-relative' >
